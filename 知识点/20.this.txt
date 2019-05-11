@@ -1,0 +1,79 @@
+对象方法调用
+
+作为对象方法调用的时候，this会被绑定到该对象。
+
+var point = {
+ x : 0,
+ y : 0,
+ moveTo : function(x, y) {
+   this.x = this.x + x;
+   this.y = this.y + y;
+   }
+};
+point.moveTo(1, 1)//this 绑定到当前对象，即 point 对象
+这里我想强调一点内容，就是this是在函数执行的时候去获取对应的值，而不是函数定义时
+
+函数调用
+
+函数也可以直接被调用，这个时候this被绑定到了全局对象。
+
+var x = 1;
+function test(){
+  this.x = 0;
+}
+test();
+alert(x); //0
+但这样就会出现一些问题，就是在 函数内部定义 的函数，其this也会指向全局，而和我们希望的恰恰相反。代码如下：
+var point = {
+ x : 0,
+ y : 0,
+ moveTo : function(x, y) {
+   // 内部函数
+   var moveX = function(x) {
+   this.x = x;//this 绑定到了全局
+  };
+  // 内部函数
+  var moveY = function(y) {
+  this.y = y;//this 绑定到了全局
+  };
+  moveX(x);
+  moveY(y);
+  }
+};
+point.moveTo(1, 1);
+point.x; //==>0
+point.y; //==>0
+x; //==>1
+y; //==>1
+我们会发现不但我们希望的移动呢效果没有完成，反而会多出两个全局变量。那么如何解决呢？只要要进入函数中的函数时将this保存到一个变量中，再运用该变量即可（还是箭头函数好）
+
+构造函数调用
+
+在javascript中自己创建构造函数时可以利用this来指向新创建的对象上。这样就可以避免函数中的this指向全局了。
+var x = 2;
+function test(){
+  this.x = 1;
+}
+var o = new test();
+alert(x); //2
+
+apply或call调用
+
+这两个方法可以切换函数执行的上下文环境，也就是改变this绑定的对象。apply和call比较类似，区别在于传入参数时一个要求是数组，一个要求是分开传入。所以我们以apply为例：
+
+var name = "window";
+var someone = {
+  name: "Bob",
+  showName: function(){
+    alert(this.name);
+  }
+};
+var other = {
+  name: "Tom"
+};
+someone.showName();   //Bob
+someone.showName.apply();  //window
+someone.showName.apply(other);  //Tom
+可以看到，正常访问对象中方法时，this指向对象。使用了apply后，apply无参数时，this的当前对象是全局，apply有参数时，this的当前对象就是该参数。
+
+ES6中的箭头函数的 this始终指向函数定义时的 this

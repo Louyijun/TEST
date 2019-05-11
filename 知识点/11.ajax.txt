@@ -1,0 +1,58 @@
+简单解释url资源定位的交互
+Ajax 是一种在无需重新加载整个网页的情况下，能够更新部分网页的技术。
+通过在后台与服务器进行少量数据交换，Ajax 可以使网页实现异步更新。这意味着可以在不重新加载整个网页的情况下，对网页的某部分进行更新。
+
+获取数据先开启服务器（用wampserver模拟）
+
+form表单<form>
+  method:get post 等
+  action：address
+  enctype:规定在发送表单数据之前如何对其进行编码
+    application/x-www-form-urlencoded
+      在发送前编码所有字符（默认）
+    multipart/form-data（<input type='file'>）
+      不对字符编码。在使用包含文件上传控件的表单时，必须使用该值。
+
+form传数据时可以用get和post。<form method='get'>
+  get：主要获取数据 发送数据不能过多，输入框限制
+  post：主要发送数据 相对安全一些
+
+在HTTP协议里实际没有区别 
+  GET使用URL或COOKIE传参，而POST将数据，放在BODY中  ？NAME='CST'&AGE=18 
+  GET的URL有长度限制，POST可以传很多数据。
+  POST比GET更安全
+
+1、浏览器
+2、ajax对象 var xxx=new xmlhttppequest()
+            var xxx=new activexobject            ('microsoft.xmlhttp')//兼容IE
+3、open(method,url,true);
+4、send();
+5、onreadystatechange
+6、200(数据取回成功) 404(个人问题) 502(服务器错误)
+7、处理
+在post里有一步xml.setRequestHeadeer('Content-type','application/x-www-form-urlencoded');
+
+onReadyStateChange 监听readyState状态值的变化0-4
+responseText 获得字符串形式的响应数据
+status 服务器返回的状态码404 200 500 304
+statusText 返回状态的文字描述200 OK
+
+Ajax技术核心就是XMLHttpRequest对象。
+Ajax技术的工作原理：可以分成3步
+1.创建Ajax对象：var xhr = new XMLHttpRequest();
+2.xhr 发送请求：xhr.open('get','test.html','true');
+                          xhr.send();
+3.xhr获取响应：
+                          xhr.onreadystatechange = function(){
+                                   if(xhr.readystate == 4){//请求的状态码
+                                                       /*
+                                                                   0:请求还没有建立（open执行前）
+                                                                   1：请求建立了还没发送（执行了open）
+                                                                    2：请求正式发送（执行了send）
+                                                                   3：请求已受理，有部分数据可以用，但还没有处理完成
+                                                                 4：请求完全处理完成
+                                                           */
+                                         alert(xhr.responseText);//返回的数据
+                                     }
+                             }
+可以看到，send()前是open()

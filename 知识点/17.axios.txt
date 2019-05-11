@@ -1,0 +1,14 @@
+axios是一个基于promise的HTTP库,可以用在浏览器和node.js中（vue-resource也是这么个玩意儿，不更新了）
+
+完全拥有promise的优点
+能够拦截请求和相应
+自动转换json格式
+
+引入
+  import axios from'axios'
+  //希望等到dom结构创建完了再获取数据
+    mounted(){}
+  //希望在创建这个组件的时候就获取数据
+    created(){}
+
+第二个参数即为传给他的数值（如：appkey）

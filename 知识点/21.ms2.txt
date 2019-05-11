@@ -1,0 +1,21 @@
+一、js的继承是什么？
+function{
+  this.a="1";
+}
+function sub(){
+  super.call(this);
+}
+在new的过程中，改变了this 的指向执行了new里的代码，返回了一个新的函数。
+
+二、ajax是什么？
+异步的javascript+xml
+
+三、如何对一个数组去重？
+①set方法
+  var arr=new Set(arr);
+  arr =Array.from(arr);
+②可以利用对象的Key不能相同去做判断
+3for循环
+
+四、rem和em的区别
+  

@@ -1,0 +1,66 @@
+这个问题是非常抽象的，越是抽象的问题越能表现出我们的表达能力，而面试官就喜欢根据你的回答来追问，不断地打断你的思路，这个时候不要慌，一定要坚信自己。
+
+回答思路
+
+我们在开发的时候会明确项目要兼容哪些浏览器的最低版本，我之前的项目要求兼容IE8.0以上的版本，Chrome 48以上，FireFox 44以上。有了这些最基本的要求，在开发中就是要考虑到CSS样式和JavaScript的在这些浏览器的兼容性了
+
+（一）html部分
+
+1.H5新标签在IE9以下的浏览器识别 
+<!--[if lt IE 9]>
+ <script type="text/javascript" src="js/html5shiv.js"></script>
+<![endif]-->
+ html5shiv.js下载地址
+https://github.com/aFarkas/html5shiv/releases
+
+2.ul标签内外边距问题ul标签在IE6\IE7中，有个默认的外边距，但是在IE8以上及其他浏览器中有个默认的内边距。解决方法：统一设置ul的内外边距为0
+
+（二）CSS样式的兼容性      
+
+1.css的hack问题：主要针对IE的不同版本，不同的浏览器的写法不同       
+ IE的条件注释hack：       
+ <!--[if IE 6]>此处内容只有IE6.0可见<![endif]-->          
+ <!--[if IE 7]>此处内容只有IE7.0可见<![endif]-->
+
+2.IE6双边距问题：IE6在浮动后，又有横向的margin，此时，该元素的外边距是其值的2倍       
+ 解决办法：display:block;
+
+3.IE6下图片的下方有空隙      
+ 解决方法：给img设置display:block;
+
+4.IE6下两个float之间会有个3px的bug       
+ 解决办法：给右边的元素也设置float:left;
+
+5.IE6下没有min-width的概念，其默认的width就是min-width
+
+6.IE6下在使用margin:0 auto;无法使其居中       
+ 解决办法：为其父容器设置text-align:center;
+
+7.被点击过后的超链接不再具有hover和active属性       
+ 解决办法:按lvha的顺序书写css样式，
+ ":link": a标签还未被访问的状态；
+ ":visited": a标签已被访问过的状态；
+ ":hover": 鼠标悬停在a标签上的状态；
+ ":active": a标签被鼠标按着时的状态；
+
+8.在使用绝对定位或者相对定位后，IE中设置z-index失效，原因是因为其元素依赖于父元素的z-index，但是父元素默认为0， 子高父低，所以不会改变显示的顺序
+
+9.IE6下无法设置1px的行高，原因是由其默认行高引起的       
+ 解决办法：为期设置overflow:hidden;或者line-height:1px;
+
+（三）JavaScript的兼容性
+
+1.标准的事件绑定方法函数为addEventListener，但IE下是attachEvent；
+
+2.事件的捕获方式不一致，标准浏览器是由外至内，而IE是由内到外，但是最后的结果是将IE的标准定为标准
+
+3.window.event获取的。并且获取目标元素的方法也不同，标准浏览器是event.target，而IE下是event.srcElement
+
+4.在低版本的IE中获取的日期处理函数的值不是与1900的差值，但是在高版本的IE中和标准浏览器保持了一致，获取的值也是与1900的差值。          
+ 比如：var year= new Date().getYear();
+
+5.ajax的实现方式不同，这个我所理解的是获取XMLHttpRequest的不同，IE下是activeXObject
+
+6.IE中不能操作tr的innerHtml7.获得DOM节点的父节点、子节点的方式不同
+其他浏览器：parentNode  parentNode.childNodes       
+IE：parentElement parentElement.children

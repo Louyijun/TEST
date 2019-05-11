@@ -1,0 +1,37 @@
+存储位置:
+C:\Users\fl\AppData\Local\Google\Chrome\User Data\Default\Local Storage
+
+localstorage的优势
+  1、localStorage拓展了cookie的4K限制
+  2、localStorage会可以将第一次请求的数据直接存储  到本地，这个相当于一个5M大小的针对于前端页面的数  据库，相比于cookie可以节约带宽，但是这个却是只有  在高版本的浏览器中才支持的
+
+localStorage的局限
+  1、浏览器的大小不统一，并且在IE8以上的IE版本才支  持localStorage这个属性
+  2、目前所有的浏览器中都会把localStorage的值类型  限定为string类型，这个在对我们日常比较常见的JSON  对象类型需要一些转换
+  3、localStorage在浏览器的隐私模式下面是不可读取  的
+  4、localStorage本质上是对字符串的读取，如果存储  内容多的话会消耗内存空间，会导致页面变卡
+  5、localStorage不能被爬虫抓取到
+
+localStorage与sessionStorage的唯一一点区别
+  就是localStorage属于永久性存储，而sessionStorage  属于当会话结束的时候，sessionStorage中的键值对会  被清空
+
+localStorage真的是永久性存储。。
+你不删他就永久存在
+
+storage.clear();//全部删除
+local.removeItem('a');//删除某项
+
+localStorage的读取，其中官方推荐的是getItem\setItem这两种方法对其进行存取，不要问我这个为什么，因为这个我也不知道
+
+localStorage的键获取
+  var storage=window.localStorage;
+  storage.a=1;
+  storage.setItem("c",3);
+  for(var i=0;i<storage.length;i++){
+    var key=storage.key(i);
+    console.log(key);
+  }
+
+JSON.stringify()这个方法，来将JSON转换成为JSON字符串
+读取之后要将JSON字符串转换成为JSON对象，使用JSON.parse()方法
+打印出来是Object对象

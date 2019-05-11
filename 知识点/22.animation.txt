@@ -1,0 +1,38 @@
+css动画
+Internet Explorer 10、Firefox 以及 Opera 支持 animation 属性。
+Safari 和 Chrome 支持替代的 -webkit-animation 属性。
+注释：Internet Explorer 9 以及更早的版本不支持 animation 属性。
+
+animation-name	规定需要绑定到选择器的 keyframe 名称。。
+animation-duration 规定完成动画所花费的时间，以秒或毫秒计。
+animation-timing-function 规定动画的速度曲线。
+animation-delay	规定在动画开始之前的延迟。
+animation-iteration-count 规定动画应该播放的次数。
+animation-direction 规定是否应该轮流反向播放动画。
+
+div
+{
+  animation:mymove 5s infinite;
+  -webkit-animation:mymove 5s infinite; /* Safari 和   Chrome */
+}
+
+CSS3 Animation 是由三部分组成
+
+下面我们来看一个例子。
+创建了一个@keyframes命名为dropdown。
+
+关键帧主要分为3个阶段，0%、50%、100%。
+动画播放时长为6s、循环播放(infinite)、以linear方式进行播放。
+修改的元素属性为margin-top
+.list div:first-child {
+ animation: dropdown 8s linear infinite;
+}
+@keyframes dropdown {
+    0% { margin-top: 0px;}
+   /** 暂停效果 */
+   10% { margin-top: 0px;}
+   50% { margin-top: -100px;}
+   60% { margin-top: -100px;}
+   90% { margin-top: -200px;}
+  100% { margin-top: -200px;}
+}

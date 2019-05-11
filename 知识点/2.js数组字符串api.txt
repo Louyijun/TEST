@@ -1,0 +1,83 @@
+数组api
+        function shuzu(){
+            var zu=new Array;
+            var yu=new Array;
+            zu=[2,1,3,3];
+            console.log(zu);
+            var str1= zu.join("--");//1连接
+            console.log(str1);
+            yu=zu.concat("a",'b');//2拼接
+            console.log(yu);
+            yu=zu.slice(1,[2]);//3截取。参数：开始位置，结束位置
+            console.log(yu);
+            zu.splice(1,0,'8','9');//4删除，插入，替换。参数：开始位置，删除个数，插入元素
+            console.log(zu);
+            zu.reverse();
+            console.log(zu);
+            zu.sort();//5排序。按ascii码排序
+            console.log(zu);
+            zu.sort(function(){//随机打乱数组
+                return Math.random()>.5 ? 1 : -1;
+            });
+            console.log(zu);
+            str1=zu.indexOf('8',1);//6查找元素。参数：查找元素，查找位置lastindexof从后找
+            console.log(str1);//返回位置
+            str1=zu.some(function(value,index,arr){//7查找是否有符合要求元素
+                return value > 7;
+            })
+            console.log(str1);//返回boolean值
+            str1=zu.every(function(value,index,arr){//查找是否整个数组都满足
+                return value > 7;
+            })
+            console.log(str1);
+            var r;
+            yu = ['apple', 'strawberry', 'banana', 'pear', 'apple', 'orange', 'orange', 'strawberry'];
+            r = yu.filter(function (element, index, self) {//过滤数组，去重
+                return self.indexOf(element) === index;
+            });
+            console.log(r.toString());//数组转字符串
+            zu.unshift(12);//数组开头插入元素
+            console.log(zu);
+            zu.shift();//弹出数组开头元素
+            console.log(zu);
+            zu.push(13);//数组结尾插入元素
+            console.log(zu);
+            zu.pop();//弹出数组结尾元素
+            console.log(zu);
+        }
+        shuzu();
+
+
+
+字符api
+        function zifu(){
+            var fu1='  hello ha ha liumei  ';
+            console.log(fu1);
+            var fu2=fu1.slice(1,4);//截取，和substring差不多但不支持负数
+            console.log(fu2);
+            fu2=fu1.split(' ',3);//分割字符串为数组，参数：以什么分割，数组最多位
+            console.log(fu2);
+            fu2=fu1.indexOf('i',3);//查找元素。参数：查找的元素，位置
+            console.log(fu2);
+            fu2=fu1.replace(/liumei/,'xiadonghai');//替换。参数：被替换。替换
+            console.log(fu2);//只能替换一个
+            fu2=fu1.replace(/ha/g,'he');//+g全部都替换
+            console.log(fu2);
+            fu2=fu1.concat('chifan');//字符串拼接
+            console.log(fu2);
+            fu2=fu1.charAt(4);//获取指定位置字符
+            console.log(fu2);
+            fu2=fu1[4];//获取指定位置字符
+            console.log(fu2);
+            fu2=fu1.trim();//去掉字符串前后空格
+            console.log(fu2);
+            fu2=fu1.charCodeAt(4);//字符串转ASCII
+            console.log(fu2);
+            fu2=String.fromCharCode(72,69,76,76,79)//ASCII转字符串
+            console.log(fu2);
+            fu2=fu1.toUpperCase();//小写转大写
+            console.log(fu2);
+            var fu3=fu2.toLowerCase();//大写转小写
+            console.log(fu3);
+        }
+        zifu();

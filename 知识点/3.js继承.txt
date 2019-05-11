@@ -1,0 +1,174 @@
+JS继承的六种方式
+[原型]
+// B是A的原型，A是B的构造函数
+A.prototype = B
+B.constructor = A
+[约定]
+// 父类
+function Super(){
+  this.property = 'Super Property'
+}
+Super.prototype.getProperty = function(){
+  return this.property
+}
+
+一.构造继承
+1.基本思想
+通过使用call、apply方法可以在新创建的对象上执行构造函数,用父类的构造函数来增加子类的实例
+2.具体实现
+// 子类
+function Sub(){
+  Super.call(this)
+  this.property = 'Sub Property'
+}
+3.优缺点
+1）优点
+简单明了，直接继承超类构造函数的属性和方法
+2）缺点
+无法继承原型链上的属性和方法
+
+二.原型链继承
+1.基本思想
+利用原型链来实现继承，超类的一个实例作为子类的原型
+2.具体实现
+// 子类
+
+function Sub(){
+
+    this.property = 'Sub Property'
+
+}
+
+Sub.prototype = new Super()
+Sub.prototype.constructor = Sub
+
+// 注意这里new Super()生成的超类对象并没有constructor属性,故需添加上
+Sub.prototype.constructor = Sub
+3.优缺点
+
+1）优点
+
+简单明了，容易实现
+实例是子类的实例，实际上也是父类的一个实例
+父类新增原型方法/原型属性，子类都能访问到
+
+2）缺点
+
+所有子类的实例的原型都共享同一个超类实例的属性和方法
+无法实现多继承
+
+
+三.组合继承
+
+1.基本思想
+利用构造继承和原型链组合
+
+
+2.具体实现
+// 子类
+
+function Sub(){
+
+    Super.call(this)
+
+    this.property = 'Sub Property'
+
+}
+
+Sub.prototype = new Super()
+
+Sub.prototype.constructor = Sub
+
+// 注意这里new Super()生成的超类对象并没有constructor属性,故需添加上
+Sub.prototype.constructor = Sub
+3.优缺点
+
+1）优点
+
+解决了构造继承和原型链继承的两个问题
+
+2）缺点
+
+实际上子类上会拥有超类的两份属性，只是子类的属性覆盖了超类的属性
+
+
+四.原型式继承
+
+1.基本思想
+采用原型式继承并不需要定义一个类，传入参数obj,生成一个继承obj对象的对象
+
+
+2.具体实现
+function objectCreate(obj){
+    function F(){}
+    F.prototype = obj
+    return new F()
+}
+3.优缺点
+
+1）优点：
+
+直接通过对象生成一个继承该对象的对象
+
+2）缺点：
+
+不是类式继承，而是原型式基础，缺少了类的概念
+
+
+五.寄生式继承
+
+1.基本思想
+创建一个仅仅用于封装继承过程的函数，然后在内部以某种方式增强对象，最后返回对象
+
+
+2.具体实现
+function objectCreate(obj){
+
+    function F(){}
+
+    F.prototype = obj
+  return new F()
+
+}
+
+function createSubObj(superInstance){
+
+    var clone = objectCreate(superInstance)
+
+    clone.property = 'Sub Property'
+  return clone
+
+}
+3.优缺点
+1）优点：
+原型式继承的一种拓展
+2）缺点：
+依旧没有类的概念
+
+六.寄生组合式继承
+1.基本思想
+结合寄生式继承和组合式继承，完美实现不带两份超类属性的继承方式
+2.具体实现
+function inheritPrototype(Super,Sub){
+
+    var superProtoClone = Object.Create(Super.prototype)
+      superProtoClone.constructor = Sub
+
+    Sub.prototype = Super
+
+}
+
+function Sub(){
+
+    Super.call()
+
+    Sub.property = 'Sub Property'
+
+}
+
+inheritPrototype(Super,Sub)
+3.优缺点
+1）优点：
+完美实现继承，解决了组合式继承带两份属性的问题
+2）缺点：
+过于繁琐，故不如组合继承

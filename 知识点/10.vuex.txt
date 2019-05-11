@@ -1,0 +1,77 @@
+状态管理 为了解决组件间通信
+1.使用父子组件传递信息
+2.用eventBus(创建一个vue实例,当组件多了之后不方便)
+3.vuex（）是一个对象
+
+state 状态 $store.state.value(不够方便)
+  computed:{
+    value(){
+      return this.$store.state.value;
+    }
+  }
+mutations 定义方法 集中管理state中需要改变的值
+  this.$store.commit
+  <button @click="add(3)">add</button>
+  import {mapMutations}from'vuex';
+  methods:mapMutations(['add'])
+  mutations:{
+      add(state,n){
+          state.value+=n;
+      }
+  }
+mapState
+        ...mapState(['value'])
+        ...mapState({
+            n:'value'
+        })
+        ...mapState({
+            n:function(state){
+                return state.value
+            }
+        })
+
+getters 计算属性
+  getters:{
+    doubleNum(state){
+      return state.num*2
+    }
+  }
+  ...mapGetters
+
+actions 也是方法 异步操作时更好调试
+  mutations里的方法一定要同步执行
+  ...mapActions
+
+modules 模块
+  modules:{
+    map:{
+      namespaced:true, 
+      state:{
+        num:1
+      },
+      getters:{
+         
+      }
+    },
+    news:{
+      
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

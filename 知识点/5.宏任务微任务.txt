@@ -1,0 +1,279 @@
+setTimeout(function(){
+
+    console.log('1')
+
+});
+
+new Promise(function(resolve){
+		        console.log('2');
+
+}).then(function(){
+
+    console.log('3')
+
+});
+
+console.log('4');
+
+https://blog.csdn.net/lc237423551/article/details/79902106 
+
+同步和异步任务分别进入不同的执行"场所"，
+同步的进入主线程，异步的进入Event Table并注册函数。当指定的事情完成时，Event Table会将这个函数移入Event Queue。主线程内的任务执行完毕为空，会去Event Queue读取对应的函数，进入主线程执行。
+上述过程会不断重复，也就是常说的Event Loop(事件循环)。
+js异步有一个机制，就是遇到宏任务，先执行宏任务，将宏任务放入eventqueue，然后在执行微任务，将微任务放入eventqueue
+最骚的是，这两个queue不是一个queue。当你往外拿的时候先从微任务里拿这个回掉函数，然后再从宏任务的queue上拿宏任务的回掉函数。
+
+宏任务一般是：包括整体代码script，setTimeout，setInterval。
+
+微任务：Promise，process.nextTick。
+
+因为settimeout是宏任务，虽然先执行的他，但是他被放到了宏任务的eventqueue里面，然后代码继续往下检查看有没有微任务，检测到Promise的then函数把他放入了微任务序列。等到主线进程的所有代码执行结束后。先从微任务queue里拿回掉函数，然后微任务queue空了后再从宏任务的queue拿函数。
+
+所以正确的执行结果当然是：2，4，3，1。
+JS的执行机制
+1.关于javascriptjavascript是一门单线程语言，在最新的HTML5中提出了Web-Worker，但javascript是单线程这一核心仍未改变。所以一切javascript版的"多线程"都是用单线程模拟出来的，一切javascript多线程都是纸老虎
+
+2.javascript事件循环既然js是单线程，那就像只有一个窗口的银行，客户需要排队一个一个办理业务，同理js任务也要一个一个顺序执行。如果一个任务耗时过长，那么后一个任务也必须等着。那么问题来了，假如我们想浏览新闻，但是新闻包含的超清图片加载很慢，难道我们的网页要一直卡着直到图片完全显示出来？因此聪明的程序员将任务分为两类：
+
+同步任务
+异步任务
+
+当我们打开网站时，网页的渲染过程就是一大堆同步任务，比如页面骨架和页面元素的渲染。而像加载图片音乐之类占用资源大耗时久的任务，就是异步任务。关于这部分有严格的文字定义，但本文的目的是用最小的学习成本彻底弄懂执行机制，所以我们用导图来说明：
+
+作者：ssssyoki
+链接：https://juejin.im/post/59e85eebf265da430d571f89
+setTimeout(() => {
+    task()
+},3000)
+
+sleep(10000000) 
+task()执行时间明显大于三秒
+task()进入Event Table并注册,计时开始。
+执行sleep函数，很慢，非常慢，计时仍在继续。
+3秒到了，计时事件timeout完成，task()进入Event Queue，但是sleep也太慢了吧，还没执行完，只好等着。
+sleep终于执行完了，task()终于从Event Queue进入了主线程执行
+
+我们还经常遇到setTimeout(fn,0)这样的代码，0秒后执行又是什么意思呢？是不是可以立即执行呢？
+答案是不会的，setTimeout(fn,0)的含义是，指定某个任务在主线程最早可得的空闲时间执行，意思就是不用再等多少秒了，只要主线程执行栈内的同步任务全部执行完成，栈为空就马上执行。
+//代码1
+console.log('先执行这里');
+setTimeout(() => {
+    console.log('执行啦')
+},0);
+输出结果：
+//先执行这里
+//执行啦
+
+//代码2
+console.log('先执行这里');
+setTimeout(() => {
+    console.log('执行啦')
+},3000);
+输出结果：
+//先执行这里
+// ... 3s later
+// 执行啦
+
+4.又恨又爱的setInterval
+上面说完了setTimeout，当然不能错过它的孪生兄弟setInterval。他俩差不多，只不过后者是循环的执行。
+对于执行顺序来说，setInterval会每隔指定的时间将注册的函数置入Event Queue，如果前面的任务耗时太久，那么同样需要等待。
+
+唯一需要注意的一点是，对于setInterval(fn,ms)来说，我们已经知道不是每过ms秒会执行一次fn，而是每过ms秒，会有fn进入Event Queue。
+一旦setInterval的回调函数fn执行时间超过了延迟时间ms，那么就完全看不出来有时间间隔了。
+这句话请读者仔细品味。
+
+
+
+5.Promise与process.nextTick(callback)
+传统的定时器我们已经研究过了，接着我们探究Promise与process.nextTick(callback)的表现。
+
+Promise的定义和功能本文不再赘述，不了解的读者可以学习一下阮一峰老师的Promise。
+而process.nextTick(callback)类似node.js版的"setTimeout"，在事件循环的下一次循环中调用 callback 回调函数。
+
+事件循环的顺序，决定js代码的执行顺序。进入整体代码(宏任务)后，开始第一次循环。接着执行所有的微任务。然后再次从宏任务开始，找到其中一个任务队列执行完毕，再执行所有的微任务。听起来有点绕，我们用文章最开始的一段代码说明：
+setTimeout(function() {
+
+    console.log('setTimeout');
+
+})
+
+
+new Promise(function(resolve) {
+
+    console.log('promise');
+}).then(function() {
+
+    console.log('then');
+
+})
+
+
+console.log('console');
+
+
+这段代码作为宏任务，进入主线程。
+
+先遇到setTimeout，那么将其回调函数注册后分发到宏任务Event Queue。(注册过程与上同，下文不再描述)
+
+接下来遇到了Promise，new Promise立即执行，then函数分发到微任务Event Queue。
+
+遇到console.log()，立即执行。
+
+好啦，整体代码script作为第一个宏任务执行结束，看看有哪些微任务？我们发现了then在微任务Event Queue里面，执行。
+
+ok，第一轮事件循环结束了，我们开始第二轮循环，当然要从宏任务Event Queue开始。我们发现了宏任务Event Queue中setTimeout对应的回调函数，立即执行。
+
+结束。
+
+console.log('1');
+
+
+setTimeout(function() {
+
+    console.log('2');
+
+    process.nextTick(function() {
+
+        console.log('3');
+
+    })
+
+    new Promise(function(resolve) {
+
+        console.log('4');
+
+        resolve();
+
+    }).then(function() {
+
+        console.log('5')
+
+    })
+
+})
+
+process.nextTick(function() {
+
+    console.log('6');
+
+})
+
+new Promise(function(resolve) {
+
+    console.log('7');
+
+    resolve();
+
+}).then(function() {
+
+    console.log('8')
+
+})
+
+
+setTimeout(function() {
+
+    console.log('9');
+
+    process.nextTick(function() {
+
+        console.log('10');
+
+    })
+
+    new Promise(function(resolve) {
+
+        console.log('11');
+
+        resolve();
+
+    }).then(function() {
+
+        console.log('12')
+
+    })
+
+})
+
+
+第一轮事件循环流程分析如下：
+
+
+整体script作为第一个宏任务进入主线程，遇到console.log，输出1。
+
+遇到setTimeout，其回调函数被分发到宏任务Event Queue中。我们暂且记为setTimeout1。
+
+遇到process.nextTick()，其回调函数被分发到微任务Event Queue中。我们记为process1。
+
+遇到Promise，new Promise直接执行，输出7。then被分发到微任务Event Queue中。我们记为then1。
+
+又遇到了setTimeout，其回调函数被分发到宏任务Event Queue中，我们记为setTimeout2。
+
+
+
+
+
+此时已经输出了1和7。
+
+
+我们发现了process1和then1两个微任务。
+
+
+执行process1,输出6。
+
+执行then1，输出8。
+
+
+好了，第一轮事件循环正式结束，这一轮的结果是输出1，7，6，8。
+
+那么第二轮时间循环从setTimeout1宏任务开始：
+
+
+首先输出2。
+接下来遇到了process.nextTick()，同样将其分发到微任务Event Queue中，记为process2。
+new Promise立即执行输出4，then也分发到微任务Event Queue中，记为then2。
+
+
+
+
+
+第二轮事件循环宏任务结束，我们发现有process2和then2两个微任务可以执行。
+
+输出3。
+输出5。
+
+第二轮事件循环结束，
+第二轮输出2，4，3，5。
+
+第三轮事件循环开始，此时只剩setTimeout2了，执行。
+
+直接输出9。
+
+将process.nextTick()分发到微任务Event Queue中。记为process3。
+
+直接执行new Promise，输出11。
+
+将then分发到微任务Event Queue中，记为then3。
+
+
+
+
+
+
+
+
+
+
+第三轮事件循环宏任务执行结束，执行两个微任务process3和then3。
+
+输出10。
+输出12。
+
+第三轮事件循环结束，第三轮输出9，11，10，12。
+
+
+整段代码，共进行了三次事件循环，完整的输出为1，7，6，8，2，4，3，5，9，11，10，12
+
+
+javascript是一门单线程语言
+Event Loop是javascript的执行机制

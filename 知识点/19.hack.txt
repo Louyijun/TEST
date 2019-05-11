@@ -1,0 +1,105 @@
+解决浏览器局部的兼容性问题。而这个针对不同的浏览器写不同的CSS 代码的过程，就叫CSS Hack。
+
+CSS Hack常见的有三种形式：CSS属性Hack、CSS选择符Hack以及IE条件注释Hack， Hack主要针对IE浏览器。
+
+1、属性级Hack：比如IE6能识别下划线”_”和星号” * “，IE7能识别星号” * “，但不能识别下划线”_”，而firefox两个都不能认识。
+
+2、选择符级Hack：比如IE6能识别*html .class{}，IE7能识别*+html .class{}或者*:first-child+html .class{}。
+
+3、IE条件注释Hack：IE条件注释是微软从IE5开始就提供的一种非标准逻辑语句。比如针对所有IE：<!–[if IE]><!–您的代码–><![endif]–>，针对IE6及以下版本：<!–[if lt IE 7]><!–您的代码–><![endif]–>，这类Hack不仅对CSS生效，对写在判断语句里面的所有代码都 会生效。
+
+PS：条件注释只有在IE浏览器下才能执行，这个代码在非IE浏览下被当做注释视而不见。可以通过IE条件注释载入不同的CSS、JS、HTML和服务器代码等。
+
+二、常用的CSS Hack
+
+ 
+
+代码如下:
+
+/* CSS属性级Hack */
+color:red; /* 所有浏览器可识别*/
+_color:red; /* 仅IE6 识别 */
+*color:red; /* IE6、IE7 识别 */
++color:red; /* IE6、IE7 识别 */
+*+color:red; /* IE6、IE7 识别 */
+[color:red; /* IE6、IE7 识别 */
+color:red9; /* IE6、IE7、IE8、IE9 识别 */
+color:red; /* IE8、IE9 识别*/
+color:red9; /* 仅IE9识别 */
+color:red ; /* 仅IE9识别 */
+color:red!important; /* IE6 不识别!important*/
+-------------------------------------------------------------
+/* CSS选择符级Hack */
+*html #demo { color:red;} /* 仅IE6 识别 */
+*+html #demo { color:red;} /* 仅IE7 识别 */
+body:nth-of-type(1) #demo { color:red;} /* IE9+、FF3.5+、Chrome、Safari、Opera 可以识别 */
+head:first-child+body #demo { color:red; } /* IE7+、FF、Chrome、Safari、Opera 可以识别 */
+:root #demo { color:red9; } : /* 仅IE9识别 */
+--------------------------------------------------------------
+/* IE条件注释Hack */
+<!--[if IE]>此处内容只有IE可见<![endif]--> 
+<!--[if IE 6]>此处内容只有IE6.0可见<![endif]--> 
+<!--[if IE 7]>此处内容只有IE7.0可见<![endif]--> 
+<!--[if !IE 7]>此处内容只有IE7不能识别，其他版本都能识别，当然要在IE5以上。<![endif]-->
+<!--[if gt IE 6]> IE6以上版本可识别,IE6无法识别 <![endif]-->
+<!--[if gte IE 7]> IE7以及IE7以上版本可识别 <![endif]-->
+<!--[if lt IE 7]> 低于IE7的版本才能识别，IE7无法识别。 <![endif]-->
+<!--[if lte IE 7]> IE7以及IE7以下版本可识别<![endif]-->
+<!--[if !IE]>此处内容只有非IE可见<![endif]-->
+ 
+
+三、IE6对!important的支持
+
+!important一般用来做区分IE6和Firefox等浏览器的基本Hack手法。因为IE6不支持!important，而Firefox能读懂!important，其改变了样式的优先级。其实IE6在某些情况下，也能认识!important。
+
+例如：
+代码如下:
+
+<style type="text/css">
+.demo{
+color:red !important;
+color:green;
+}
+</style>
+<div class="demo">www.jb51.net</div>
+
+上面代码在FF下字体为红色、IE6下字体为绿色。说明IE6忽视!important的存在。
+
+再来看看：
+代码如下:
+
+<style type="text/css"> 
+.demo{ color:red !important; } 
+.demo { color:green; } 
+</style> 
+<div class="demo">www.jb51.net</div>
+
+如果IE6不认!important的话，上面代码.demo的内容应该显示为绿色，可偏偏不是，.demo的内容显示为红色，说明IE6是认得!important的。
+
+两种情况的区别就在于：当在一个选择器中，利用!important改变样式优先级的时候，IE6下是无效的，后面的样式覆盖了前面的，!important被彻底无视了，利用!import
+
+四、IE6下的多选择符
+多类选择符的写法。例如：
+
+代码如下:
+#my.c1.c2 { color:red;}
+.c1.c2 { color:red;}
+以上写法在IE7+/FF/Opera/Safari 等浏览器都支持。
+
+但在IE6中，后一个类名会覆盖前一个类名，也就是说，上例被IE6理解为：
+
+代码如下:
+#my.c2 { color:red;}
+.c2 { color:red;}
+同理：
+ 
+代码如下:
+#my.c1.c2.c3 { color:red;}
+IE6理解为　#my.c3 {color:red;}
+ 
+代码如下:
+.c1.c2.c3 { color:red;}
+IE6理解为　.c3 { color:red; }
+ 
+
+所以开发中用多类来组合实现css效果的时候，注意IE6的这个问题。最好的方法就是，不要用类组合的形式。
